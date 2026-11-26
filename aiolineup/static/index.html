@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#0f1012">
+  <title>AIOLineup</title>
+  <link rel="icon" href="/static/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/static/app.css">
+  <script src="/static/app.js" defer></script>
+</head>
+<body>
+  <div id="app" class="app" hidden>
+    <nav class="nav" aria-label="Main">
+      <div class="brand">AIOLineup</div>
+      <a href="#/overview" data-view="overview"><svg class="ico" aria-hidden="true"><use href="/static/icons.svg#i-overview"/></svg><span>Overview</span></a>
+      <a href="#/channels" data-view="channels"><svg class="ico" aria-hidden="true"><use href="/static/icons.svg#i-channels"/></svg><span>My channels</span></a>
+      <a href="#/add" data-view="add"><svg class="ico" aria-hidden="true"><use href="/static/icons.svg#i-catalog"/></svg><span>Add channels</span></a>
+      <a href="#/sources" data-view="sources"><svg class="ico" aria-hidden="true"><use href="/static/icons.svg#i-sources"/></svg><span>Sources</span></a>
+      <a href="#/settings" data-view="settings"><svg class="ico" aria-hidden="true"><use href="/static/icons.svg#i-settings"/></svg><span>Settings</span></a>
+    </nav>
+    <div class="job" id="job" role="status"></div>
+    <main id="main"></main>
+  </div>
+  <form id="login" class="login" hidden>
+    <h1>AIOLineup</h1>
+    <p class="muted">Sign in to manage your channels and feeds.</p>
+    <label>Username <input name="username" autocomplete="username" required></label>
+    <label>Password <input name="password" type="password" autocomplete="current-password" required></label>
+    <button type="submit" class="primary">Sign in</button>
+    <p class="error" id="login-error" role="alert"></p>
+  </form>
+  <div id="toast" class="toast" role="status" hidden></div>
+</body>
+</html>

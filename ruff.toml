@@ -1,0 +1,11 @@
+# Ruff is a dev-only tool (format and lint). It is never installed in the image.
+# Run it as `uvx ruff@0.17.6 format .` and `uvx ruff@0.17.6 check .`.
+target-version = "py313"
+line-length = 100
+extend-exclude = ["aiolineup/static", "data"]
+
+[lint]
+select = ["E", "F", "W", "I", "UP", "B"]
+# The formatter owns line wrapping. The 24 remaining long lines are SQL, test fixtures and
+# f-strings that cannot be split without touching the text, so E501 is not enforced.
+ignore = ["E501"]

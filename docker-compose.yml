@@ -1,0 +1,36 @@
+# Coolify: deploy this repository as a "Docker Compose" application and set the domain
+# (e.g. https://aiolineup.example.com) on the aiolineup service. Generated secrets
+# (SERVICE_PASSWORD_*, SERVICE_HEX_*) persist across redeploys and can be viewed/edited
+# under Environment Variables.
+#
+# Outside Coolify: copy .env.example to .env, fill in the values, and add a `ports:` mapping
+# (for example "8080:8080") if you need to reach the container from the host.
+services:
+  aiolineup:
+    build: .
+    restart: unless-stopped
+    environment:
+      - SERVICE_URL_AIOLINEUP_8080  # Coolify's proxy routes to this container port
+      # The _8080 value carries the port (https://host:8080); the plain one is the public URL.
+      - 'PUBLIC_URL=${SERVICE_URL_AIOLINEUP}'
+      - 'ADMIN_USER=${ADMIN_USER:-admin}'
+      - 'ADMIN_PASSWORD=${SERVICE_PASSWORD_ADMIN}'
+      - 'FEED_TOKEN=${SERVICE_HEX_64_FEEDTOKEN}'
+      - 'REFRESH_SECONDS=${REFRESH_SECONDS:-21600}'
+      - 'REQUEST_TIMEOUT=${REQUEST_TIMEOUT:-60}'
+      - 'M3U_MAX_MB=${M3U_MAX_MB:-20}'
+      - 'EPG_MAX_DOWNLOAD_MB=${EPG_MAX_DOWNLOAD_MB:-200}'
+      - 'EPG_MAX_DECOMPRESSED_MB=${EPG_MAX_DECOMPRESSED_MB:-1024}'
+      - 'LOG_LEVEL=${LOG_LEVEL:-INFO}'
+    volumes:
+      - 'aiolineup_data:/data'
+    mem_limit: 256m
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/health', timeout=4)"]
+      interval: 30s
+      timeout: 5s
+      start_period: 30s
+      retries: 3
+
+volumes:
+  aiolineup_data: null

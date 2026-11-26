@@ -1,0 +1,45 @@
+name: CI
+
+# main only fast-forwards to a dev commit that already passed, so pushes to it are not run again.
+on:
+  push:
+    branches-ignore: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+# Jobs run in parallel. Within a job, later steps run even when an earlier check fails, so one
+# push reports every failure. Commands follow the README's Development commands (standard library
+# only: nothing to install or audit; Ruff runs through uvx, pinned, and is not shipped).
+jobs:
+  static:
+    name: Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - uses: astral-sh/setup-uv@v10.4.0
+      - run: python3 -m compileall -q aiolineup tests scripts
+      - if: ${{ !cancelled() }}
+        run: uvx ruff@0.17.6 format --check .
+      - if: ${{ !cancelled() }}
+        run: uvx ruff@0.17.6 check .
+
+  test:
+    name: Tests and build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - id: test
+        run: python3 -m unittest discover -s tests -t .
+      - if: ${{ !cancelled() }}
+        run: docker build -t aiolineup .
